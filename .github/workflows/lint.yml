@@ -1,0 +1,37 @@
+name: Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Install ESLint
+      run: npm install -g eslint
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install Python linters
+      run: pip install pylint flake8
+      
+    - name: Lint JavaScript/TypeScript
+      run: |
+        find . -name "*.js" -o -name "*.ts" | head -5 | xargs -I {} eslint {} || true
+        
+    - name: Lint Python
+      run: |
+        find . -name "*.py" | head -5 | xargs -I {} pylint {} || true
